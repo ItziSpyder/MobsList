@@ -37,9 +37,8 @@ public class MobListHud implements HudRenderCallback {
             int dist = MobTrackerTicker.MOB_DISTANCE.get(entry.getKey());
             String msg = "§7x" + entry.getValue();
 
-
             if (Monster.class.isAssignableFrom(entry.getKey()) && dist <= 16) {
-                msg = msg.concat(" §7-" + dist);
+                msg = msg.concat(" §7.." + dist);
             }
             else {
                 msg = msg.concat(" §8§o.." + dist);
