@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "mobslist",
+  "version": "${version}",
+  "name": "MobsList",
+  "description": "A list of all the mobs in your world!",
+  "authors": [
+    "ImproperIssues"
+  ],
+  "contact": {
+    "repo": "https://github.com/ItziSpyder/MobsList"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/mobslist/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.itzispyder.mobslist.client.MobsListClient"
+    ],
+    "main": [
+      "io.github.itzispyder.mobslist.MobsList"
+    ]
+  },
+  "mixins": [
+    "mobslist.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.22",
+    "fabric": "*",
+    "minecraft": "1.20.2"
+  }
+}
