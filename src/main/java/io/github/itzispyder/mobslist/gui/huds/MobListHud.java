@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Comparator;
@@ -33,7 +34,18 @@ public class MobListHud implements HudRenderCallback {
                 return;
             }
             MobSkinDrawer.drawHead(context, entry.getKey(), margin + 1, caret.get() + 1, size);
-            context.drawText(client.textRenderer, "§7x" + entry.getValue(), margin + 10, caret.get() + 1, 0xFFFFFFFF, true);
+            int dist = MobTrackerTicker.MOB_DISTANCE.get(entry.getKey());
+            String msg = "§7x" + entry.getValue() + " §8§o";
+
+
+            if (HostileEntity.class.isAssignableFrom(entry.getKey()) && dist <= 16) {
+                msg = msg.concat("§e-" + dist);
+            }
+            else {
+                msg = msg.concat("§8§o.." + dist);
+            }
+
+            context.drawText(client.textRenderer, msg, margin + 10, caret.get() + 1, 0xFFFFFFFF, true);
             count.addAndGet(entry.getValue());
             caret.addAndGet(10);
         });
