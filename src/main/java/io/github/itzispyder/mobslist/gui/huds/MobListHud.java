@@ -33,11 +33,11 @@ public class MobListHud implements HudRenderCallback {
                 return;
             }
             MobSkinDrawer.drawHead(context, entry.getKey(), margin + 1, caret.get() + 1, size);
-            context.drawText(client.textRenderer, "x" + entry.getValue(), margin + 10, caret.get() + 1, 0xFFFFFFFF, true);
+            context.drawText(client.textRenderer, "§7x" + entry.getValue(), margin + 10, caret.get() + 1, 0xFFFFFFFF, true);
             count.addAndGet(entry.getValue());
             caret.addAndGet(10);
         });
 
-        context.drawText(client.textRenderer, "Total Living Entities: " + count.get(), margin, margin, 0xFFFFFFFF, true);
+        context.drawText(client.textRenderer, "§7Total: " + count.get(), margin, margin, 0xFFFFFFFF, true);
     }
 }
