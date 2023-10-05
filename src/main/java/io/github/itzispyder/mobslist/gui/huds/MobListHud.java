@@ -68,7 +68,11 @@ public class MobListHud implements HudRenderCallback {
             int count = 0;
 
             for (PlayerEntity player : client.player.getWorld().getPlayers()) {
-                if (player.getId() == player.getId()) {
+                if (count >= 5) {
+                    context.drawText(client.textRenderer, "§7...", margin + 1, caret + 1, 0xFFFFFFFF, true);
+                    break;
+                }
+                if (player.getGameProfile().getName().equals(client.player.getGameProfile().getName())) {
                     continue;
                 }
 
@@ -84,7 +88,7 @@ public class MobListHud implements HudRenderCallback {
             }
 
             if (count > 0) {
-                context.drawText(client.textRenderer, "§7Players: " + count, margin, marginTop, 0xFFFFFFFF, true);
+                context.drawText(client.textRenderer, "§7Players: " + count + (count >= 5 ? "+" : ""), margin, marginTop, 0xFFFFFFFF, true);
             }
         }
     }
