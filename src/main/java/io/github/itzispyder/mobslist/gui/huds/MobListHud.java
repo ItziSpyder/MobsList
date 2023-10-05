@@ -13,6 +13,7 @@ import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -67,20 +68,19 @@ public class MobListHud implements HudRenderCallback {
             int size = 8;
             int count = 0;
 
-            for (PlayerEntity player : client.player.getWorld().getPlayers()) {
-                if (count >= 5) {
-                    context.drawText(client.textRenderer, "§7...", margin + 1, caret + 1, 0xFFFFFFFF, true);
-                    break;
-                }
-                if (player.getGameProfile().getName().equals(client.player.getGameProfile().getName())) {
-                    continue;
-                }
+            List<? extends PlayerEntity> players = client.player.getWorld().getPlayers().stream()
+                    .filter(p -> !p.getGameProfile().getId().equals(client.player.getGameProfile().getId()))
+                    .sorted(Comparator.comparing(p -> p.distanceTo(client.player)))
+                    .toList();
+            int max = Math.min(5, players.size());
 
-                PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(player.getGameProfile().getId());
-                if (entry != null) {
+            for (int i = 0; i < max; i++) {
+                PlayerEntity player = players.get(i);
+                PlayerListEntry listEntry = client.player.networkHandler.getPlayerListEntry(player.getGameProfile().getId());
+                if (listEntry != null) {
                     int dist = (int)player.distanceTo(client.player);
-                    String msg = " §8§o" + entry.getProfile().getName() + " §e.." + dist;
-                    PlayerSkinDrawer.draw(context, entry.getSkinTextures(), margin + 1, caret + 1, size);
+                    String msg = " §8§o" + listEntry.getProfile().getName() + " §" + (count == 0 ? "e" : "7") + ".." + dist;
+                    PlayerSkinDrawer.draw(context, listEntry.getSkinTextures(), margin + 1, caret + 1, size);
                     context.drawText(client.textRenderer, msg, margin + 10, caret + 1, 0xFFFFFFFF, true);
                     caret += 10;
                     count ++;
@@ -88,7 +88,11 @@ public class MobListHud implements HudRenderCallback {
             }
 
             if (count > 0) {
-                context.drawText(client.textRenderer, "§7Players: " + count + (count >= 5 ? "+" : ""), margin, marginTop, 0xFFFFFFFF, true);
+                boolean more = count >= 5 && players.size() > 5;
+                context.drawText(client.textRenderer, "§7Players: " + count + (more ? "+" : ""), margin, marginTop, 0xFFFFFFFF, true);
+                if (more) {
+                    context.drawText(client.textRenderer, "§7...", margin + 1, caret + 1, 0xFFFFFFFF, true);
+                }
             }
         }
     }
