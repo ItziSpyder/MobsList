@@ -6,6 +6,8 @@ import io.github.itzispyder.mobslist.util.MobSkinDrawer;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.PlayerSkinDrawer;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,6 +25,11 @@ public class MobListHud implements HudRenderCallback {
         }
 
         MinecraftClient client = MinecraftClient.getInstance();
+        this.drawMobs(client, context);
+        this.drawPlayers(client, context);
+    }
+
+    public void drawMobs(MinecraftClient client, DrawContext context) {
         AtomicInteger caret = new AtomicInteger(20);
         AtomicInteger count = new AtomicInteger();
         Comparator<Object> comparator = Comparator.comparing(map -> ((Map.Entry<Class<? extends Entity>, Integer>)map).getValue()).reversed();
@@ -38,7 +45,7 @@ public class MobListHud implements HudRenderCallback {
             String msg = "§7x" + entry.getValue();
 
             if (Monster.class.isAssignableFrom(entry.getKey()) && dist <= 16) {
-                msg = msg.concat(" §7.." + dist);
+                msg = msg.concat(" §e§o.." + dist);
             }
             else {
                 msg = msg.concat(" §8§o.." + dist);
@@ -50,5 +57,35 @@ public class MobListHud implements HudRenderCallback {
         });
 
         context.drawText(client.textRenderer, "§7Total: " + count.get(), margin, margin, 0xFFFFFFFF, true);
+    }
+
+    public void drawPlayers(MinecraftClient client, DrawContext context) {
+        if (client.player != null) {
+            int marginTop = 10;
+            int margin = 70;
+            int caret = 20;
+            int size = 8;
+            int count = 0;
+
+            for (PlayerEntity player : client.player.getWorld().getPlayers()) {
+                if (player.getId() == player.getId()) {
+                    continue;
+                }
+
+                PlayerListEntry entry = client.player.networkHandler.getPlayerListEntry(player.getGameProfile().getId());
+                if (entry != null) {
+                    int dist = (int)player.distanceTo(client.player);
+                    String msg = " §8§o" + entry.getProfile().getName() + " §e.." + dist;
+                    PlayerSkinDrawer.draw(context, entry.getSkinTextures(), margin + 1, caret + 1, size);
+                    context.drawText(client.textRenderer, msg, margin + 10, caret + 1, 0xFFFFFFFF, true);
+                    caret += 10;
+                    count ++;
+                }
+            }
+
+            if (count > 0) {
+                context.drawText(client.textRenderer, "§7Players: " + count, margin, marginTop, 0xFFFFFFFF, true);
+            }
+        }
     }
 }
