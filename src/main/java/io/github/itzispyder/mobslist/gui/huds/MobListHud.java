@@ -80,7 +80,7 @@ public class MobListHud implements HudRenderCallback {
                 if (listEntry != null) {
                     int dist = (int)player.distanceTo(client.player);
                     String msg = " §8§o" + listEntry.getProfile().getName() + " §" + (count == 0 ? "e" : "7") + ".." + dist;
-                    PlayerSkinDrawer.draw(context, listEntry.getSkinTextures(), margin + 1, caret + 1, size);
+                    PlayerSkinDrawer.draw(context, listEntry.getSkinTexture(), margin + 1, caret + 1, size);
                     context.drawText(client.textRenderer, msg, margin + 10, caret + 1, 0xFFFFFFFF, true);
                     caret += 10;
                     count ++;
